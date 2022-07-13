@@ -42,8 +42,6 @@ export async function updateUser(req, res, next) {
             requestedUsername
         )
 
-        const isNewBossBoss = isBoss(newBoss.role)
-
         if (!newBoss) throw new Error('Boss you specified does not exist!')
         if (!requestedUser) throw new Error('User does not exist!')
 
@@ -51,6 +49,8 @@ export async function updateUser(req, res, next) {
             return res
                 .status(403)
                 .send(`You have to be a boss of the ${requestedUsername}!`)
+
+        const isNewBossBoss = isBoss(newBoss.role)
 
         if (!isNewBossBoss)
             return res.status(400).send(`${newBoss.username} is not a boss!`)
