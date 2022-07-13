@@ -1,7 +1,7 @@
 import { Router, json } from 'express'
 import { body } from 'express-validator'
-import registration from '../controllers/registration.js'
 import validationResultHandler from '../middlewares/validationResultHandler.js'
+import registration from '../controllers/registration.js'
 
 const router = new Router()
 router.use(json())

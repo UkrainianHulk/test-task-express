@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+    test-task:
+        build: .
+        environment:
+            APP_PORT: ${APP_PORT}
+            DB_URI: mongodb://${DB_USERNAME}:${DB_PASSWORD}@mongo:27017/
+            DB_NAME: ${DB_NAME}
+            JWT_SECRET: ${JWT_SECRET}
+        ports:
+            - '${APP_PORT}:${APP_PORT}'
+        restart: unless-stopped
+
+    mongo:
+        image: mongo
+        restart: always
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
+            MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+
+    mongo-express:
+        image: mongo-express
+        restart: always
+        ports:
+            - 8081
+        environment:
+            ME_CONFIG_MONGODB_ADMINUSERNAME: ${DB_USERNAME}
+            ME_CONFIG_MONGODB_ADMINPASSWORD: ${DB_PASSWORD}

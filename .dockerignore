@@ -1,0 +1,6 @@
+node_modules
+.env
+.husky
+.eslintrc.json
+.prettierrc.json
+README.md

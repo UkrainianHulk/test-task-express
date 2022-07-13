@@ -1,6 +1,7 @@
 import { db } from '../services/database.js'
 import UsersDAO from '../services/UsersDAO.js'
 import { hashPassword } from '../utils/crypto.js'
+import { isBoss } from '../utils/roles.js'
 
 const usersDAO = new UsersDAO(db)
 
@@ -14,6 +15,7 @@ export default async function (req, res, next) {
             'firstName',
             'lastName'
         ]
+
         const user = userFilds.reduce((acc, field) => {
             if (req.body[field] === undefined) return acc
             else return { [field]: req.body[field], ...acc }
@@ -21,10 +23,13 @@ export default async function (req, res, next) {
 
         if (user.role !== 'admin') {
             if (!user.boss) throw new Error('You must specify your boss!')
+
             const boss = await usersDAO.findUserByUsername(user.boss)
             if (!boss) throw new Error('Boss you specified does not exist!')
-            if (!/boss|admin/.test(boss.role))
-                throw new Error('User you specified is not boss!')
+
+            const isUserBoss = isBoss(boss.role)
+            if (!isUserBoss) throw new Error('User you specified is not boss!')
+
             user.boss = boss._id
         }
 

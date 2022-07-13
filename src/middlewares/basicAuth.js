@@ -6,15 +6,20 @@ import { db } from '../services/database.js'
 const usersDAO = new UsersDAO(db)
 
 export default async (req, res, next) => {
-    const { username, password } = parseBasicAuth(req.headers.authorization)
+    try {
+        const { username, password } = parseBasicAuth(req.headers.authorization)
 
-    const user = await usersDAO.findUserByUsername(username)
-    if (username !== user?.username)
-        return res.status(404).send('User does not exist!')
-    const { hash } = hashPassword(password, user.salt)
-    if (hash !== user?.password) return res.status(401).send('Wrong password!')
+        const user = await usersDAO.findUserByUsername(username)
+        if (username !== user?.username)
+            return res.status(404).send('User does not exist!')
+        const { hash } = hashPassword(password, user.salt)
+        if (hash !== user?.password)
+            return res.status(401).send('Wrong password!')
 
-    res.locals.username = username
+        res.locals.username = username
 
-    return next()
+        return next()
+    } catch (error) {
+        next(error)
+    }
 }

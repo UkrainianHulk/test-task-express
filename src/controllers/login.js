@@ -7,12 +7,16 @@ const { JWT_SECRET } = env
 const usersDAO = new UsersDAO(db)
 
 export default async function (req, res, next) {
-    const { username } = res.locals
-    const user = await usersDAO.findUserByUsername(username)
+    try {
+        const { username } = res.locals
+        const user = await usersDAO.findUserByUsername(username)
 
-    const token = jwt.sign({ username, role: user.role }, JWT_SECRET, {
-        expiresIn: '1d'
-    })
+        const token = jwt.sign({ username, role: user.role }, JWT_SECRET, {
+            expiresIn: '1d'
+        })
 
-    res.send(token)
+        res.send(token)
+    } catch (error) {
+        next(error)
+    }
 }
