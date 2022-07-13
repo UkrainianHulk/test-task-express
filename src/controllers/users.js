@@ -39,16 +39,18 @@ export async function updateUser(req, res, next) {
         const requestedUser = await usersDAO.findUserByUsername(
             requestedUsername
         )
-        const newBoss = await usersDAO.findUserByUsername(req.body.boss)
-        const isNewBossBoss = isBoss(newBoss.role)
-
-        if (!isNewBossBoss)
-            return res.status(400).send(`${newBoss.username} is not a boss!`)
 
         if (!requestedUser.boss.equals(user._id))
             return res
                 .status(403)
                 .send(`You have to be a boss of the ${requestedUsername}!`)
+
+        const newBoss = await usersDAO.findUserByUsername(req.body.boss)
+        if (!newBoss) throw new Error('Boss you specified does not exist!')
+        const isNewBossBoss = isBoss(newBoss.role)
+
+        if (!isNewBossBoss)
+            return res.status(400).send(`${newBoss.username} is not a boss!`)
 
         await usersDAO.updateUser(
             { username: requestedUsername },
