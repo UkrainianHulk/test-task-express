@@ -1,7 +1,3 @@
-## Working instance
-
-https://dev.yarka.ml
-
 ## Routes
 
 ```js
